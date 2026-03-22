@@ -1,15 +1,15 @@
+import { RootStackParamList } from "@/app/App";
+import { issueStore } from "@/store";
+import { Issue } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import {
-    FlatList,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { RootStackParamList } from "../app";
-import { issueStore } from "../store";
-import { Issue } from "../types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 

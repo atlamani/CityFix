@@ -10,7 +10,6 @@ interface StoredUser extends User {
 }
 
 interface UserCredentials {
-  id: string;
   email: string;
   phoneNumber: string;
   username: string;
@@ -18,7 +17,7 @@ interface UserCredentials {
 }
 
 class AuthStore {
-  private users: Map<string, UserCredentials> = new Map();
+  private users: Map<string, StoredUser> = new Map();
   private currentUser: User | null = null;
   private listeners: Set<() => void> = new Set();
 
@@ -30,11 +29,6 @@ class AuthStore {
       username: "DemoUser",
       password: "demo123",
     });
-
-    const savedUser = localStorage.getItem("cityfix_user");
-    if (savedUser) {
-      this.currentUser = JSON.parse(savedUser);
-    }
   }
 
   subscribe(listener: () => void) {
@@ -76,7 +70,7 @@ class AuthStore {
       password: credentials.password,
     };
 
-    this.users.set(credentials.email, credentials);
+    this.users.set(credentials.email, storedUser);
 
     this.currentUser = {
       id: storedUser.id,

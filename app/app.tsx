@@ -3,8 +3,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { SafeAreaView, StatusBar } from "react-native";
 
-import HomeScreen from "./components/Home";
-import LoginScreen from "./components/login";
+import HomeScreen from "@/components/Home";
+import LoginScreen from "@/components/login";
 
 export type RootStackParamList = {
   Login: undefined;

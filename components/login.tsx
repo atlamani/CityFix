@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
+import { RootStackParamList } from "@/app/App";
+import { authStore } from "@/auth-store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../app";
-import { authStore } from "../auth-store";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
