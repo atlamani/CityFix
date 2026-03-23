@@ -39,13 +39,11 @@ export default function LoginScreen({ navigation }: Props) {
   };
 
   const handleBrowseAsGuest = () => {
-    //
     navigation.replace("Home");
   };
 
   const handleSignUpNavigate = () => {
-    // SignUp Screen here
-    // navigation.navigate("SignUp");
+    navigation.navigate("SignUp");
   };
 
   return (
