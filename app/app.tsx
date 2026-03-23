@@ -5,13 +5,14 @@ import { SafeAreaView, StatusBar } from "react-native";
 
 import HomeScreen from "@/components/Home";
 import LoginScreen from "@/components/login";
+import ReportIssueScreen from "@/components/ReportIssueScreen";
 import SignUpScreen from "@/components/SignUpScreen";
 
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   SignUp: undefined;
-  // ReportIssue: undefined;
+  ReportIssue: undefined;
   // IssueDetail: { id: string };
   // Profile: undefined;
 };
@@ -31,6 +32,7 @@ export default function App() {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="ReportIssue" component={ReportIssueScreen} />
         </Stack.Navigator>
       </SafeAreaView>
     </NavigationContainer>
