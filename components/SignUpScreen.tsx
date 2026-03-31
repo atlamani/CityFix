@@ -1,6 +1,5 @@
-import { RootStackParamList } from "@/app/App";
-import { authStore } from "@/auth-store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
     ActivityIndicator,
@@ -11,10 +10,13 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { RootStackParamList } from "../App";
+import { authStore } from "../auth-store";
 
 type Props = NativeStackScreenProps<RootStackParamList, "SignUp">;
 
 export default function SignUpScreen({ navigation }: Props) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
@@ -49,12 +51,32 @@ export default function SignUpScreen({ navigation }: Props) {
       });
 
       if (result.success) {
-        navigation.replace("Home");
+        if (navigation?.replace) {
+          navigation.replace("Home");
+        } else {
+          router.replace("/(tabs)");
+        }
       } else {
         setError(result.error || "Sign up failed");
       }
       setIsloading(false);
     }, 500);
+  };
+
+  const handleBack = () => {
+    if (navigation?.goBack) {
+      navigation.goBack();
+    } else {
+      router.back();
+    }
+  };
+
+  const handleAlreadyHaveAccount = () => {
+    if (navigation?.replace) {
+      navigation.replace("Login");
+    } else {
+      router.replace("/");
+    }
   };
 
   return (
@@ -63,7 +85,7 @@ export default function SignUpScreen({ navigation }: Props) {
       contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled"
     >
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={handleBack}>
         <Text style={styles.backLink}>Back</Text>
       </TouchableOpacity>
 
@@ -131,7 +153,7 @@ export default function SignUpScreen({ navigation }: Props) {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.replace("Login")}>
+        <TouchableOpacity onPress={handleAlreadyHaveAccount}>
           <Text style={styles.footerText}>
             Already have an account?{" "}
             <Text style={styles.footerLink}>Log In</Text>

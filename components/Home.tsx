@@ -1,4 +1,4 @@
-import { RootStackParamList } from "@/app/App";
+import { RootStackParamList } from "@/App";
 import { issueStore } from "@/store";
 import { Issue } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";

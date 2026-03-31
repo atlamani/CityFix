@@ -8,18 +8,27 @@ import {
   View,
 } from "react-native";
 
-import { RootStackParamList } from "@/app/App";
+import { RootStackParamList } from "@/App";
 import { authStore } from "@/auth-store";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useRouter } from "expo-router";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function LoginScreen({ navigation }: Props) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const goHome = () => {
+    if (navigation?.replace) {
+      navigation.replace("Home");
+    } else {
+      router.replace("/(tabs)");
+    }
+  };
 
   const handleSubmit = () => {
     setError("");
@@ -29,7 +38,7 @@ export default function LoginScreen({ navigation }: Props) {
       const result = authStore.login(email, password);
 
       if (result.success) {
-        navigation.replace("Home");
+        goHome();
       } else {
         setError(result.error || "Login Failed");
       }
@@ -39,11 +48,15 @@ export default function LoginScreen({ navigation }: Props) {
   };
 
   const handleBrowseAsGuest = () => {
-    navigation.replace("Home");
+    goHome();
   };
 
   const handleSignUpNavigate = () => {
-    navigation.navigate("SignUp");
+    if (navigation?.navigate) {
+      navigation.navigate("SignUp");
+    } else {
+      router.push("/SignUp");
+    }
   };
 
   return (
@@ -77,7 +90,7 @@ export default function LoginScreen({ navigation }: Props) {
             value={password}
             onChangeText={setPassword}
             placeholder="Enter Password"
-            secureTextEntry={!showPassword}
+            secureTextEntry={true}
             style={styles.input}
           />
         </View>

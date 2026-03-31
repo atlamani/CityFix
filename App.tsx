@@ -1,12 +1,12 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
-import { SafeAreaView, StatusBar } from "react-native";
-
 import HomeScreen from "@/components/Home";
 import LoginScreen from "@/components/login";
 import ReportIssueScreen from "@/components/ReportIssueScreen";
 import SignUpScreen from "@/components/SignUpScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+import React from "react";
+import { SafeAreaView, StatusBar } from "react-native";
 
 export type RootStackParamList = {
   Login: undefined;

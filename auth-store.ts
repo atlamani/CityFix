@@ -79,10 +79,22 @@ class AuthStore {
       username: storedUser.username,
     };
 
-    localStorage.setItem("cityfix_user", JSON.stringify(this.currentUser));
+    this.persistUser(this.currentUser);
     this.notify();
 
     return { success: true };
+  }
+
+  private persistUser(user: User | null) {
+    if (typeof localStorage === "undefined") {
+      return;
+    }
+
+    if (user) {
+      localStorage.setItem("cityfix_user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("cityfix_user");
+    }
   }
 
   login(email: string, password: string): { success: boolean; error?: string } {
@@ -103,7 +115,7 @@ class AuthStore {
       username: user.username,
     };
 
-    localStorage.setItem("cityfix_user", JSON.stringify(this.currentUser));
+    this.persistUser(this.currentUser);
     this.notify();
 
     return { success: true };
@@ -111,7 +123,7 @@ class AuthStore {
 
   logout() {
     this.currentUser = null;
-    localStorage.removeItem("cityfix_user");
+    this.persistUser(null);
     this.notify();
   }
 
@@ -165,7 +177,7 @@ class AuthStore {
         username: updates.username,
       };
 
-      localStorage.setItem("cityfix_user", JSON.stringify(this.currentUser));
+      this.persistUser(this.currentUser);
       this.notify();
     }
 
