@@ -1,4 +1,5 @@
 import HomeScreen from "@/components/Home";
+import IssueDetailScreen from "@/components/IssueDetailScreen";
 import LoginScreen from "@/components/login";
 import ReportIssueScreen from "@/components/ReportIssueScreen";
 import SignUpScreen from "@/components/SignUpScreen";
@@ -13,8 +14,8 @@ export type RootStackParamList = {
   Home: undefined;
   SignUp: undefined;
   ReportIssue: undefined;
-  // IssueDetail: { id: string };
-  // Profile: undefined;
+  IssueDetail: { id: string };
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +34,7 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="ReportIssue" component={ReportIssueScreen} />
+          <Stack.Screen name="IssueDetail" component={IssueDetailScreen} />
         </Stack.Navigator>
       </SafeAreaView>
     </NavigationContainer>

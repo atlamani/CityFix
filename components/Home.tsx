@@ -2,6 +2,7 @@ import { RootStackParamList } from "@/App";
 import { issueStore } from "@/store";
 import { Issue } from "@/types";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -14,8 +15,28 @@ import {
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export default function HomeScreen({ navigation }: Props) {
+  const router = useRouter();
   const [issues, setIssues] = useState<Issue[]>(issueStore.getIssues());
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>(issues);
+
+  const navigateToIssueDetail = (issueId: string) => {
+    if (navigation?.navigate) {
+      navigation.navigate("IssueDetail", { id: issueId });
+    } else {
+      router.push({
+        pathname: "/IssueDetail",
+        params: { id: issueId },
+      });
+    }
+  };
+
+  const navigateToReportIssue = () => {
+    if (navigation?.navigate) {
+      navigation.navigate("ReportIssue");
+    } else {
+      router.push("/ReportIssue");
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = issueStore.subscribe(() => {
@@ -34,7 +55,7 @@ export default function HomeScreen({ navigation }: Props) {
     <TouchableOpacity
       style={styles.card}
       onPress={() => {
-        // navigation.navigate("IssueDetail", { id: item.id });
+        navigateToIssueDetail(item.id);
       }}
     >
       <Text style={styles.cardTitle}>{item.description}</Text>
@@ -57,11 +78,7 @@ export default function HomeScreen({ navigation }: Props) {
         <Text style={styles.summaryText}>
           Showing {filteredIssues.length} of {issues.length} issues
         </Text>
-        <TouchableOpacity
-          onPress={() => {
-            //open filters, or navigate to ReportIssue
-          }}
-        >
+        <TouchableOpacity onPress={navigateToReportIssue}>
           <Text style={styles.summaryLink}>Report Issue</Text>
         </TouchableOpacity>
       </View>

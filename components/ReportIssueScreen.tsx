@@ -4,17 +4,18 @@ import { issueStore } from "@/store";
 import { IssueCategory } from "@/types";
 import { Feather } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ReportIssue">;
@@ -52,8 +53,31 @@ export default function ReportIssueScreen({ navigation }: Props) {
   }, [navigation, router]);
 
   const handlePickImage = async () => {
-    setError("Image picker not configured. Using placeholder image instead.");
-    setPhotoUri("https://via.placeholder.com/400");
+    try {
+      // Request permission to access media library
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        setError("Permission to access photos is required.");
+        return;
+      }
+
+      // Launch image picker
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 0.8,
+        aspect: [4, 3],
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      });
+
+      if (!result.canceled && result.assets.length > 0) {
+        setPhotoUri(result.assets[0].uri);
+        setError(""); // Clear any previous errors
+      }
+    } catch (error) {
+      console.error("Image picker error:", error);
+      setError("Failed to pick image. Please try again.");
+    }
   };
 
   const handleSubmit = async () => {
