@@ -54,7 +54,6 @@ export default function ReportIssueScreen({ navigation }: Props) {
 
   const handlePickImage = async () => {
     try {
-      // Request permission to access media library
       const { status } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
@@ -62,7 +61,6 @@ export default function ReportIssueScreen({ navigation }: Props) {
         return;
       }
 
-      // Launch image picker
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         quality: 0.8,
@@ -72,7 +70,7 @@ export default function ReportIssueScreen({ navigation }: Props) {
 
       if (!result.canceled && result.assets.length > 0) {
         setPhotoUri(result.assets[0].uri);
-        setError(""); // Clear any previous errors
+        setError("");
       }
     } catch (error) {
       console.error("Image picker error:", error);
@@ -124,8 +122,13 @@ export default function ReportIssueScreen({ navigation }: Props) {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       <TouchableOpacity
+        style={styles.backButton}
         onPress={() => {
           if (navigation?.goBack) {
             navigation.goBack();
@@ -133,90 +136,113 @@ export default function ReportIssueScreen({ navigation }: Props) {
             router.back();
           }
         }}
+        activeOpacity={0.85}
       >
+        <Feather name="arrow-left" size={18} color="#2563EB" />
         <Text style={styles.backLink}>Back to Issues</Text>
       </TouchableOpacity>
 
-      <Text style={styles.title}>Report an Issue</Text>
-      <Text style={styles.subtitle}>
-        Help Improve your Community by reporting problems that need attention
-      </Text>
+      <View style={styles.formCard}>
+        <Text style={styles.title}>Report an Issue</Text>
+        <Text style={styles.subtitle}>
+          Help improve your community by reporting problems that need attention
+        </Text>
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <Text style={styles.sectionLabel}>Select Category *</Text>
-      <View style={styles.categoriesRow}>
-        {categories.map(({ value, label, icon }) => {
-          const active = category === value;
-          return (
-            <TouchableOpacity
-              key={value}
-              style={[styles.categoryCard, active && styles.categoryCardActive]}
-              onPress={() => setCategory(value)}
-            >
-              <Feather
-                name={icon}
-                size={18}
-                color={active ? "#1D4ED8" : "#4B5563"}
-              />
-              <Text
+        <Text style={styles.sectionLabel}>Select Category *</Text>
+        <View style={styles.categoriesRow}>
+          {categories.map(({ value, label, icon }) => {
+            const active = category === value;
+            return (
+              <TouchableOpacity
+                key={value}
                 style={[
-                  styles.categoryLabel,
-                  active && styles.categoryLabelActive,
+                  styles.categoryCard,
+                  active && styles.categoryCardActive,
                 ]}
+                onPress={() => setCategory(value)}
+                activeOpacity={0.85}
               >
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+                <Feather
+                  name={icon}
+                  size={18}
+                  color={active ? "#2563EB" : "#111827"}
+                />
+                <Text
+                  style={[
+                    styles.categoryLabel,
+                    active && styles.categoryLabelActive,
+                  ]}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        <Text style={styles.sectionLabel}>Location *</Text>
+        <TextInput
+          value={location}
+          onChangeText={setLocation}
+          placeholder="e.g., Main Street & 5th Ave"
+          placeholderTextColor="#9CA3AF"
+          style={styles.input}
+        />
+
+        <Text style={styles.sectionLabel}>Description *</Text>
+        <TextInput
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Provide details about the issue..."
+          placeholderTextColor="#9CA3AF"
+          style={[styles.input, styles.textArea]}
+          multiline
+        />
+
+        <Text style={styles.charCount}>{description.length} characters</Text>
+
+        <Text style={styles.sectionLabel}>Photo *</Text>
+        <TouchableOpacity
+          style={styles.photoBox}
+          onPress={handlePickImage}
+          activeOpacity={0.85}
+        >
+          {photoUri ? (
+            <>
+              <Image source={{ uri: photoUri }} style={styles.photo} />
+              <Text style={styles.photoHint}>Tap to change photo</Text>
+              <Text style={styles.photoSubHint}>PNG, JPG up to 10MB</Text>
+            </>
+          ) : (
+            <>
+              <Feather name="camera" size={42} color="#9CA3AF" />
+              <Text style={styles.photoHint}>Click to upload a photo</Text>
+              <Text style={styles.photoSubHint}>PNG, JPG up to 10MB</Text>
+            </>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.submitButton, isSubmitting && styles.buttonDisabled]}
+          onPress={handleSubmit}
+          disabled={isSubmitting}
+          activeOpacity={0.9}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <Text style={styles.submitLabel}>Submit Report</Text>
+          )}
+        </TouchableOpacity>
       </View>
 
-      <Text style={styles.sectionLabel}>Location *</Text>
-      <TextInput
-        value={location}
-        onChangeText={setLocation}
-        placeholder="e.g., Main Street & 5th Ave"
-        style={styles.input}
-      />
-
-      <Text style={styles.sectionLabel}>Description *</Text>
-      <TextInput
-        value={description}
-        onChangeText={setDescription}
-        placeholder="Provide details about the issue"
-        style={[styles.input, styles.textArea]}
-      />
-
-      <Text style={styles.sectionLabel}>{description.length} characters</Text>
-
-      <Text style={styles.sectionLabel}>Photo *</Text>
-      <TouchableOpacity style={styles.photoBox} onPress={handlePickImage}>
-        {photoUri ? (
-          <>
-            <Image source={{ uri: photoUri }} style={styles.photo} />
-            <Text style={styles.photoHint}>Tap to change photo</Text>
-          </>
-        ) : (
-          <>
-            <Feather name="camera" size={28} color={"#6B7280"} />
-            <Text style={styles.photoHint}>Tap to upload a photo</Text>
-            <Text style={styles.photoSubHint}>PNG, JPG</Text>
-          </>
-        )}
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.submitButton, isSubmitting && styles.buttonDisabled]}
-        onPress={handleSubmit}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="#FFF" />
-        ) : (
-          <Text style={styles.submitLabel}>Submit Report</Text>
-        )}
-      </TouchableOpacity>
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          CityFix - Report and track community issues
+        </Text>
+      </View>
     </ScrollView>
   );
 }
@@ -224,61 +250,91 @@ export default function ReportIssueScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#F8FAFC",
   },
 
   content: {
-    padding: 16,
-    paddingBottom: 32,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 24,
+    alignItems: "center",
+  },
+
+  backButton: {
+    width: "100%",
+    maxWidth: 700,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 14,
   },
 
   backLink: {
     color: "#2563EB",
-    marginBottom: 12,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+
+  formCard: {
+    width: "100%",
+    maxWidth: 700,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    paddingHorizontal: 22,
+    paddingVertical: 22,
   },
 
   title: {
-    fontSize: 22,
-    fontWeight: "700",
-    marginBottom: 4,
+    fontSize: 34,
+    lineHeight: 38,
+    fontWeight: "800",
+    color: "#111827",
+    marginBottom: 6,
+    letterSpacing: -0.4,
   },
 
   subtitle: {
-    fontSize: 13,
+    fontSize: 16,
+    lineHeight: 22,
     color: "#6B7280",
-    marginBottom: 16,
+    marginBottom: 22,
   },
 
   error: {
     color: "#DC2626",
     marginBottom: 8,
     fontSize: 13,
+    fontWeight: "500",
   },
 
   sectionLabel: {
-    fontSize: 13,
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: "700",
     color: "#374151",
     marginTop: 12,
-    marginBottom: 4,
+    marginBottom: 8,
   },
 
   categoriesRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    justifyContent: "space-between",
   },
 
   categoryCard: {
+    width: "48%",
+    minHeight: 64,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#D8DDE6",
     borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginRight: 8,
-    marginBottom: 8,
+    paddingHorizontal: 14,
+    marginBottom: 14,
+    backgroundColor: "#FFFFFF",
+    gap: 10,
   },
 
   categoryCardActive: {
@@ -287,68 +343,78 @@ const styles = StyleSheet.create({
   },
 
   categoryLabel: {
-    marginLeft: 6,
-    fontSize: 12,
-    color: "#4B5563",
+    fontSize: 15,
+    color: "#111827",
+    fontWeight: "600",
+    flexShrink: 1,
   },
 
   categoryLabelActive: {
     color: "#1D4ED8",
-    fontWeight: "600",
   },
 
   input: {
+    width: "100%",
     borderWidth: 1,
-    borderColor: "#D1D5DB",
+    borderColor: "#D8DDE6",
     borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    fontSize: 15,
+    color: "#111827",
     backgroundColor: "#FFF",
   },
 
   textArea: {
-    minHeight: 100,
+    minHeight: 130,
     textAlignVertical: "top",
   },
 
   charCount: {
-    alignSelf: "flex-end",
-    marginTop: 4,
-    fontSize: 11,
-    color: "#9CA3AF",
+    alignSelf: "flex-start",
+    marginTop: 6,
+    fontSize: 13,
+    color: "#6B7280",
   },
 
   photoBox: {
-    borderWidth: 1,
-    borderColor: "#D1D5DB",
+    width: "100%",
+    minHeight: 268,
+    borderWidth: 2,
+    borderColor: "#D6DCE6",
     borderStyle: "dashed",
     borderRadius: 12,
-    padding: 16,
+    paddingVertical: 28,
+    paddingHorizontal: 20,
     alignItems: "center",
-    backgroundColor: "#FFF",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
   },
 
   photo: {
     width: "100%",
     height: 180,
     borderRadius: 10,
-    marginBottom: 8,
+    marginBottom: 14,
   },
+
   photoHint: {
-    fontSize: 13,
-    color: "#4B5563",
+    fontSize: 16,
+    color: "#374151",
+    fontWeight: "600",
+    marginTop: 14,
   },
 
   photoSubHint: {
-    fontSize: 11,
-    color: "#9CA3AF",
-    marginTop: 2,
+    fontSize: 13,
+    color: "#6B7280",
+    marginTop: 6,
   },
 
   submitButton: {
-    marginTop: 20,
-    backgroundColor: "#2563EB",
+    marginTop: 18,
+    width: "100%",
+    backgroundColor: "#D1D5DB",
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
@@ -361,6 +427,19 @@ const styles = StyleSheet.create({
   },
 
   buttonDisabled: {
-    opacity: 0.7,
+    opacity: 0.8,
+  },
+
+  footer: {
+    width: "100%",
+    maxWidth: 700,
+    paddingVertical: 26,
+    alignItems: "center",
+  },
+
+  footerText: {
+    fontSize: 14,
+    color: "#4B5563",
+    textAlign: "center",
   },
 });
